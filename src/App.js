@@ -1,29 +1,29 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 import "./index.css";
 
 import Todolist from "./Todolist";
 import { v4 as uuidv4 } from "uuid";
 function App() {
+
   const [todos, setTodos] = useState([]);
   const refTask = useRef();
-  // const LOCAL_STORAGE_KEY = "todoapp.todolist";
+
+  const LOCAL_STORAGE_KEY = "todolist";
   //  <-----retriveing data from localStorage------>
 
-  // useEffect(() => {
-  //   const storedTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-  //   console.log(">>>>>>>",storedTodos)
-  //   if (storedTodos) setTodos(storedTodos);
-  // }, []);
+  useEffect(() => {
+    const storedTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+    if (storedTodos) setTodos(storedTodos);
+  }, []);
 
-  // //     <------saving to local storage-------->
-
-  // useEffect(() => {
-  //   if(todos){
-
-  //     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
-  //   }
-  // }, [todos]);
+  //     <------saving to local storage-------->
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
+    if (!todos.length) {
+      localStorage.clear()
+    }
+  }, [todos]);
 
   //    <------------ adding new task ----------->
 
@@ -41,6 +41,8 @@ function App() {
     setTodos([...todos, newTodo]);
     refTask.current.value = null;
   };
+
+  // toggling completed check box  
 
   const toggleComplete = (id) => {
     const newtodo = [...todos];
@@ -74,10 +76,10 @@ function App() {
         <button className="btn p-0 me-auto btn-success col-1" onClick={addToList}> <span className="material-icons p-md-2">add</span> </button>
       </div>
       <p className="text-center text-white pt-1">
-      Completed Tasks : { todos.filter((item)=>item.completed).length} out of ( {todos.length} )
+        Completed Tasks : {todos.filter((item) => item.completed).length} out of ( {todos.length} )
       </p>
-      <div  className=" col-12 px-2">
-      <button className="btn col-12 btn-outline-danger" onClick={clearCompleted}> Clear completed </button>
+      <div className=" col-12 px-2">
+        {todos.length ? <button className="btn col-12 btn-outline-danger" onClick={clearCompleted}> Clear completed </button> : ""}
       </div>
 
       <Todolist
